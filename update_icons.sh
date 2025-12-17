@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SRC_ICON="/Users/akshaykadam/Documents/React/AI Writing Assistant/ai-writing-assistant/assets/icon.png"
-RES_DIR="/Users/akshaykadam/Documents/React/AI Writing Assistant/ai-writing-assistant/android/app/src/main/res"
+SRC_ICON="$(pwd)/assets/icon.png"
+RES_DIR="$(pwd)/android/app/src/main/res"
 
 resize_and_copy() {
   SIZE=$1

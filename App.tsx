@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Linking, Platform, useColorScheme, ScrollView, SafeAreaView, NativeModules, NativeEventEmitter, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Linking, Platform, useColorScheme, ScrollView, SafeAreaView, NativeModules, NativeEventEmitter, ActivityIndicator, AppState } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const PRIMARY_COLOR = '#15C39A';
 const { LocalAIModule } = NativeModules;
@@ -14,6 +15,30 @@ export default function App() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadStatus, setDownloadStatus] = useState('');
+  const [isServiceEnabled, setIsServiceEnabled] = useState(false);
+
+  const checkServiceStatus = async () => {
+    if (LocalAIModule && LocalAIModule.isAccessibilityServiceEnabled) {
+      const enabled = await LocalAIModule.isAccessibilityServiceEnabled();
+      setIsServiceEnabled(enabled);
+    }
+  };
+
+  useEffect(() => {
+    // Check initial status
+    checkServiceStatus();
+
+    // Check on app resume
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'active') {
+        checkServiceStatus();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     // Check if model is downloaded on mount
@@ -83,38 +108,56 @@ export default function App() {
         </View>
 
         {/* Main Action Card */}
+        {/* Main Action Card */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Get Started</Text>
-          <Text style={styles.cardDescription}>
-            enable the Accessibility Service to let Refine.AI assist you in any app.
-          </Text>
 
-          <View style={styles.stepsContainer}>
-            <View style={styles.stepRow}>
-              <Text style={styles.stepNumber}>1</Text>
-              <Text style={styles.stepText}>Tap the button below</Text>
+          {isServiceEnabled ? (
+            <View>
+              <Text style={styles.cardDescription}>
+                Service is active! You can now use Refine.AI in other apps.
+              </Text>
+              <View style={[styles.stepsContainer, { alignItems: 'center', marginVertical: 20 }]}>
+                <Ionicons name="checkmark-circle" size={64} color={PRIMARY_COLOR} />
+                <Text style={[styles.stepText, { fontWeight: 'bold', marginTop: 10 }]}>You're all set!</Text>
+              </View>
+              <TouchableOpacity style={[styles.secondaryButton]} onPress={openSettings}>
+                <Text style={styles.secondaryButtonText}>Open Settings</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.stepRow}>
-              <Text style={styles.stepNumber}>2</Text>
-              <Text style={styles.stepText}>Find "Refine.AI" in the list</Text>
-            </View>
-            <View style={styles.stepRow}>
-              <Text style={styles.stepNumber}>3</Text>
-              <Text style={styles.stepText}>Toggle it ON</Text>
-            </View>
-          </View>
+          ) : (
+            <View>
+              <Text style={styles.cardDescription}>
+                Enable the Accessibility Service to let Refine.AI assist you in any app.
+              </Text>
 
-          <TouchableOpacity style={styles.primaryButton} onPress={openSettings}>
-            <Text style={styles.primaryButtonText}>Enable Service</Text>
-          </TouchableOpacity>
+              <View style={styles.stepsContainer}>
+                <View style={styles.stepRow}>
+                  <Text style={styles.stepNumber}>1</Text>
+                  <Text style={styles.stepText}>Tap the button below</Text>
+                </View>
+                <View style={styles.stepRow}>
+                  <Text style={styles.stepNumber}>2</Text>
+                  <Text style={styles.stepText}>Find "Refine.AI" in the list</Text>
+                </View>
+                <View style={styles.stepRow}>
+                  <Text style={styles.stepNumber}>3</Text>
+                  <Text style={styles.stepText}>Toggle it ON</Text>
+                </View>
+              </View>
+
+              <TouchableOpacity style={styles.primaryButton} onPress={openSettings}>
+                <Text style={styles.primaryButtonText}>Enable Service</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         {/* Local AI Section - Only show if model not downloaded */}
         {isModelDownloaded === false && (
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Local AI</Text>
             <Text style={styles.cardDescription}>
-              Download the AI model to enable offline text processing. This requires ~1.5 GB of storage.
+              Download the AI model to enable offline text processing. This requires ~1.4 GB of storage.
             </Text>
 
             {isDownloading ? (
@@ -136,7 +179,7 @@ export default function App() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>About</Text>
           <Text style={styles.cardDescription}>
-            Refine.AI is a system-wide writing assistant powered by Gemini AI with optional on-device processing via Gemma 2B. Rewrite, correct, and tone-switch your text in any app.
+            Refine.AI is a system-wide writing assistant powered by Gemini AI with optional on-device processing via Gemma 1B. Rewrite, correct, and tone-switch your text in any app.
           </Text>
           <Text style={[styles.cardDescription, { marginTop: 10 }]}>
             Privacy First: With Local AI mode, your text never leaves your device. Cloud mode uses encrypted transmission only when you tap Rewrite.

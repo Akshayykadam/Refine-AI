@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -26,42 +27,68 @@
         android:gravity="center_vertical"
         android:layout_marginBottom="16dp">
         
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Writing Assistant"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:fontFamily="sans-serif-medium"/>
+            android:orientation="vertical">
 
-        <Switch
-            android:id="@+id/switch_use_local"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Writing Assistant"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:fontFamily="sans-serif-medium"/>
+
+            <TextView
+                android:id="@+id/model_status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Powered by Gemini"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="On-Device"
-            android:checked="true"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:thumbTint="@color/btn_primary"
-            android:trackTint="@color/chip_background"
-            android:textColor="@color/text_primary"
-            android:layout_marginEnd="8dp"
-            />
+            android:orientation="horizontal"
+            android:background="@drawable/bg_chip"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:gravity="center_vertical"
+            android:layout_marginEnd="12dp">
 
-            
-        <Button
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Local AI"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginEnd="8dp"/>
+
+            <Switch
+                android:id="@+id/switch_use_local"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:thumbTint="@color/btn_primary"
+                android:trackTint="#D1D1D6"/>
+        </LinearLayout>
+
+        <ImageButton
             android:id="@+id/btn_close"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:text="X"
-            android:textSize="18sp"
-            android:textColor="@color/text_secondary"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_close"
+            app:tint="@color/text_secondary"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:padding="0dp"
-            style="?android:attr/borderlessButtonStyle"/>
+            android:scaleType="centerInside"
+            android:contentDescription="Close"/>
     </LinearLayout>
 
     <!-- Model Download Note (Plain Text) -->
@@ -83,7 +110,7 @@
         android:visibility="gone"/>
 
     <!-- Preview Card -->
-    <TextView
+    <EditText
         android:id="@+id/preview_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -96,7 +123,10 @@
         android:background="@drawable/bg_input_field"
         android:padding="16dp"
         android:layout_marginBottom="8dp"
-        android:fontFamily="sans-serif"/>
+        android:fontFamily="sans-serif"
+        android:inputType="none"
+        android:textIsSelectable="true"
+        android:focusable="true"/>
 
     <!-- Inputs Row -->
     <LinearLayout

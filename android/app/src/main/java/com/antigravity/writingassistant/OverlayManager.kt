@@ -188,8 +188,8 @@ class OverlayManager(private val context: Context) {
             val wrappedContext = android.view.ContextThemeWrapper(context, android.R.style.Theme_DeviceDefault_DayNight)
             panelView = LayoutInflater.from(wrappedContext).inflate(R.layout.action_panel_view, null)
             
-            val previewTextView = panelView?.findViewById<android.widget.TextView>(R.id.preview_text)
-            previewTextView?.text = currentText
+            val previewTextView = panelView?.findViewById<android.widget.EditText>(R.id.preview_text)
+            previewTextView?.setText(currentText)
 
             panelView?.findViewById<View>(R.id.btn_close)?.setOnClickListener {
                 hideActionPanel()
@@ -303,7 +303,9 @@ class OverlayManager(private val context: Context) {
                 if (isLocal) {
                      localEngine.rewrite(currentText, instruction) { result ->
                          android.os.Handler(android.os.Looper.getMainLooper()).post {
-                             previewTextView?.text = result
+                             previewTextView?.setText(result)
+                             previewTextView?.requestFocus()
+                             previewTextView?.selectAll()
                              lastRewrittenText = result
                              loadingIndicator?.visibility = View.GONE
                              resultActions?.visibility = View.VISIBLE
@@ -314,11 +316,11 @@ class OverlayManager(private val context: Context) {
                              }
                              
                              compareBtn?.setOnClickListener {
-                                if (previewTextView?.text == lastRewrittenText) {
-                                    previewTextView?.text = originalTextBeforeRewrite
+                                if (previewTextView?.text.toString() == lastRewrittenText) {
+                                    previewTextView?.setText(originalTextBeforeRewrite)
                                     compareBtn.text = "Show Rewrite"
                                 } else {
-                                    previewTextView?.text = lastRewrittenText
+                                    previewTextView?.setText(lastRewrittenText)
                                     compareBtn.text = "Show Original"
                                 }
                             }
@@ -341,7 +343,9 @@ class OverlayManager(private val context: Context) {
                 geminiClient.generateContent(config) { result ->
                     android.os.Handler(android.os.Looper.getMainLooper()).post {
                         if (result != null) {
-                            previewTextView?.text = result
+                            previewTextView?.setText(result)
+                            previewTextView?.requestFocus()
+                            previewTextView?.selectAll()
                             lastRewrittenText = result
                             loadingIndicator?.visibility = View.GONE
                             resultActions?.visibility = View.VISIBLE
@@ -352,11 +356,11 @@ class OverlayManager(private val context: Context) {
                             }
                             
                             compareBtn?.setOnClickListener {
-                                if (previewTextView?.text == lastRewrittenText) {
-                                    previewTextView?.text = originalTextBeforeRewrite
+                                if (previewTextView?.text.toString() == lastRewrittenText) {
+                                    previewTextView?.setText(originalTextBeforeRewrite)
                                     compareBtn.text = "Show Rewrite"
                                 } else {
-                                    previewTextView?.text = lastRewrittenText
+                                    previewTextView?.setText(lastRewrittenText)
                                     compareBtn.text = "Show Original"
                                 }
                             }

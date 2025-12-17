@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Android-green?style=flat-square" />
   <img src="https://img.shields.io/badge/AI-Gemini%20Flash-blue?style=flat-square" />
-  <img src="https://img.shields.io/badge/Local%20AI-Gemma%202B-orange?style=flat-square" />
+  <img src="https://img.shields.io/badge/Local%20AI-Gemma%201B-orange?style=flat-square" />
 </p>
 
 ---
@@ -23,7 +23,7 @@ Refine.AI is a **system-wide writing assistant** that works in any Android app. 
 |:---|:---|
 | **System-Wide** | Works in WhatsApp, Gmail, Slack, Notes, and more |
 | **One-Tap Refine** | Select text → Tap bubble → Done |
-| **Local AI Mode** | Offline processing with Gemma 2B (~1.5GB) |
+| **Local AI Mode** | Offline processing with Gemma 1B (~550MB) |
 | **Privacy First** | Your text, your device, your control |
 
 ---
@@ -47,7 +47,7 @@ Choose the perfect voice for every message:
 Frontend UI      →  React Native (Expo)
 Core Engine      →  Kotlin AccessibilityService
 Cloud AI         →  Google Gemini Flash
-Local AI         →  MediaPipe + Gemma 2B (Int4)
+Local AI         →  MediaPipe + Gemma 1B (Int4)
 ```
 
 ---
@@ -72,12 +72,11 @@ npx expo run:android
 
 ---
 
-## Local AI Setup
-
-Want offline processing? Download the AI model directly in the app:
+## 🧠 AI Model (Gemma 2B)
+To use the local AI features:
 
 1. Open **Refine.AI**
-2. Tap **Download Model** (~1.5 GB)
+2. Tap **Download Model** (~1.4 GB)
 3. Enable **On-Device** toggle in the overlay
 
 > The model runs entirely on your device — no internet required.
