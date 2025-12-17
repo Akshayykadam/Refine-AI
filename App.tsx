@@ -156,6 +156,7 @@ export default function App() {
         {/* Local AI Section - Only show if model not downloaded */}
         {isModelDownloaded === false && (
           <View style={styles.card}>
+            <Text style={styles.cardTitle}>Local AI (Experimental)</Text>
             <Text style={styles.cardDescription}>
               Download the AI model to enable offline text processing. This requires ~1.4 GB of storage.
             </Text>
@@ -179,7 +180,7 @@ export default function App() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>About</Text>
           <Text style={styles.cardDescription}>
-            Refine.AI is a system-wide writing assistant powered by Gemini AI with optional on-device processing via Gemma 1B. Rewrite, correct, and tone-switch your text in any app.
+            Refine.AI is a system-wide writing assistant powered by Gemini AI with optional on-device processing via Gemma 2B (Experimental). Rewrite, correct, and tone-switch your text in any app.
           </Text>
           <Text style={[styles.cardDescription, { marginTop: 10 }]}>
             Privacy First: With Local AI mode, your text never leaves your device. Cloud mode uses encrypted transmission only when you tap Rewrite.
