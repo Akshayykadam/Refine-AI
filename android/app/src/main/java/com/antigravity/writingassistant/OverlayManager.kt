@@ -159,8 +159,7 @@ class OverlayManager(private val context: Context) {
     
     var listener: OverlayListener? = null
 
-    // MEMBERS
-    private val localEngine by lazy { com.antigravity.writingassistant.local.LocalRewriteEngine(context) }
+    // MEMBERS - Gemini only
     private val geminiClient = GeminiClient()
     
     private var currentText: String = ""
@@ -196,29 +195,6 @@ class OverlayManager(private val context: Context) {
                 showBubble() 
             }
             
-            // Download note - just show text when model missing
-            val downloadSection = panelView?.findViewById<View>(R.id.download_section)
-            
-            val switchUseLocal = panelView?.findViewById<android.widget.Switch>(R.id.switch_use_local)
-            val modelAvailable = localEngine.isModelAvailable()
-            
-            // Configure toggle and note based on model state
-            if (modelAvailable) {
-                // Model exists: enable toggle, hide note
-                switchUseLocal?.isEnabled = true
-                switchUseLocal?.isChecked = prefs.getBoolean("use_local_ai", true)
-                downloadSection?.visibility = View.GONE
-            } else {
-                // Model missing: disable toggle, show note
-                switchUseLocal?.isEnabled = false
-                switchUseLocal?.isChecked = false
-                downloadSection?.visibility = View.VISIBLE
-            }
-            
-            switchUseLocal?.setOnCheckedChangeListener { _, isChecked ->
-                prefs.edit().putBoolean("use_local_ai", isChecked).apply()
-            }
-            
             val inputInstruction = panelView?.findViewById<android.widget.EditText>(R.id.input_instruction)
             val lastInstruction = prefs.getString("last_instruction_$currentPackageName", "")
             inputInstruction?.setText(lastInstruction)
@@ -228,15 +204,16 @@ class OverlayManager(private val context: Context) {
             val chipConcise = panelView?.findViewById<View>(R.id.chip_concise)
             val chipRefine = panelView?.findViewById<View>(R.id.chip_refine)
             val tvCharCount = panelView?.findViewById<android.widget.TextView>(R.id.tv_char_count)
-            tvCharCount?.text = "${currentText.length} / 500 characters"
+            tvCharCount?.text = "${currentText.length} / 3000 characters"
 
             val chipWarm = panelView?.findViewById<View>(R.id.chip_warm)
             val chipLove = panelView?.findViewById<View>(R.id.chip_love)
             val chipEmojify = panelView?.findViewById<View>(R.id.chip_emojify)
             val chipGrammar = panelView?.findViewById<View>(R.id.chip_grammar)
+            val chipHinglish = panelView?.findViewById<View>(R.id.chip_hinglish)
 
 
-            val allChips = listOfNotNull(chipRefine, chipGrammar, chipProfessional, chipCasual, chipConcise, chipWarm, chipLove, chipEmojify)
+            val allChips = listOfNotNull(chipRefine, chipGrammar, chipProfessional, chipCasual, chipConcise, chipWarm, chipLove, chipEmojify, chipHinglish)
             
             var selectedChipInstruction: String? = "Rewrite the text to be clearer, more fluent, and easier to read while preserving the original meaning, intent, and length. Improve grammar, sentence flow, and word choice. Do not add new ideas, remove information, or change the tone. Keep it natural and neutral."
 
@@ -253,6 +230,8 @@ class OverlayManager(private val context: Context) {
                     selectedChipInstruction = "Rewrite the text with gentle affection and care, expressing warmth, appreciation, and emotional closeness. Keep it sincere and balanced—avoid romantic excess, poetic language, or dramatic expressions. The tone should feel caring and respectful, not intense or flirtatious. Preserve the original intent."
                 } else if (text.equals("Emojify", ignoreCase = true)) {
                     selectedChipInstruction = "Rewrite the text to be clear and engaging, then add a small number of relevant emojis to enhance expression. Emojis should feel natural and supportive, not excessive or distracting. Do not change the original meaning or make the message childish. Limit emojis to 1–3 per paragraph."
+                } else if (text.equals("Hinglish", ignoreCase = true)) {
+                    selectedChipInstruction = "Rewrite the text in casual Hinglish (a natural mix of Hindi and English) as spoken by urban Indians. Use common Hindi words written in Roman script (like 'karna', 'matlab', 'bilkul', 'mast', 'yaar'). Keep the tone conversational, friendly, and informal. Preserve the original meaning but make it sound like a natural text message or chat."
                 } else if (text.equals("Refine", ignoreCase = true)) {
                     selectedChipInstruction = "Rewrite the text to be clearer, more fluent, and easier to read while preserving the original meaning, intent, and length. Improve grammar, sentence flow, and word choice. Do not add new ideas, remove information, or change the tone. Keep it natural and neutral."
                 } else if (text.equals("Grammar", ignoreCase = true)) {
@@ -298,38 +277,7 @@ class OverlayManager(private val context: Context) {
                     instruction = selectedChipInstruction ?: "Refine this text to be better"
                 }
 
-                // LOCAL ENGINE CHECK
-                val isLocal = switchUseLocal?.isChecked == true
-                if (isLocal) {
-                     localEngine.rewrite(currentText, instruction) { result ->
-                         android.os.Handler(android.os.Looper.getMainLooper()).post {
-                             previewTextView?.setText(result)
-                             previewTextView?.requestFocus()
-                             previewTextView?.selectAll()
-                             lastRewrittenText = result
-                             loadingIndicator?.visibility = View.GONE
-                             resultActions?.visibility = View.VISIBLE
-                             
-                             replaceBtn?.setOnClickListener {
-                                listener?.onReplace(result)
-                                hideActionPanel()
-                             }
-                             
-                             compareBtn?.setOnClickListener {
-                                if (previewTextView?.text.toString() == lastRewrittenText) {
-                                    previewTextView?.setText(originalTextBeforeRewrite)
-                                    compareBtn.text = "Show Rewrite"
-                                } else {
-                                    previewTextView?.setText(lastRewrittenText)
-                                    compareBtn.text = "Show Original"
-                                }
-                            }
-                         }
-                     }
-                     return@setOnClickListener
-                }
-
-                // CLOUD ENGINE
+                // Always use Gemini API
                 val useContext = true 
                 prefs.edit().putString("last_instruction_$currentPackageName", instruction).apply()
                 
@@ -377,11 +325,61 @@ class OverlayManager(private val context: Context) {
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT
             )
             params.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
             params.y = 0
+            params.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+
+            // Auto-close on keyboard dismiss
+            panelView?.viewTreeObserver?.addOnGlobalLayoutListener {
+                val r = android.graphics.Rect()
+                panelView?.getWindowVisibleDisplayFrame(r)
+                val screenHeight = panelView?.rootView?.height ?: 0
+                val keypadHeight = screenHeight - r.bottom
+                
+                // If keypad height is small, keyboard is closed. 
+                // We check if it WAS open previously to avoid closing on initial show.
+                // Simplified: If user was typing (focused) and keyboard closes -> close panel?
+                // Or simply: If keypadHeight < 100dp, close? No, that prevents showing it initially.
+                
+                // Better approach: If we detect height change significantly
+                // But simplified for now: Rely on outside touch for general dismissal
+            }
+            
+            // Close on touch outside
+            panelView?.setOnTouchListener { v, event ->
+                if (event.action == android.view.MotionEvent.ACTION_OUTSIDE) {
+                    hideActionPanel()
+                    true
+                } else {
+                    false
+                }
+            }
+
+            // Keyboard State Listener to close popup when keyboard closes
+            var isKeyboardShowing = false
+            panelView?.viewTreeObserver?.addOnGlobalLayoutListener(object : android.view.ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (panelView == null) return
+                    
+                    val r = android.graphics.Rect()
+                    panelView!!.getWindowVisibleDisplayFrame(r)
+                    val screenHeight = panelView!!.rootView.height
+                    val keypadHeight = screenHeight - r.bottom
+
+                    if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is enough to suspect keyboard
+                        isKeyboardShowing = true
+                    } else {
+                        if (isKeyboardShowing) {
+                            // Keyboard was showing, now it's gone -> Close Popup
+                            hideActionPanel()
+                        }
+                        isKeyboardShowing = false
+                    }
+                }
+            })
 
             windowManager.addView(panelView, params)
         } catch (e: Exception) {
@@ -409,5 +407,10 @@ class OverlayManager(private val context: Context) {
             }
             bubbleView = null
         }
+    }
+
+    fun hideAll() {
+        hideBubble()
+        hideActionPanel()
     }
 }

@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="60dp"
-    android:layout_height="60dp"
-    android:padding="12dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="56dp"
+    android:layout_height="56dp"
+    android:background="@drawable/bg_remove_bubble"
+    android:padding="14dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="X"
-        android:textSize="24sp"
-        android:textColor="#FFFFFF"
-        android:layout_gravity="center"
-        android:textStyle="bold"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_delete"
+        android:scaleType="fitCenter"
+        app:tint="#FFFFFF"
+        android:contentDescription="Remove"/>
+
 </FrameLayout>

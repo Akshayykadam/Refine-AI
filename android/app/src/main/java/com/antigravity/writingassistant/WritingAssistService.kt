@@ -9,6 +9,14 @@ class WritingAssistService : AccessibilityService() {
 
     private var overlayManager: OverlayManager? = null
 
+    private val screenReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: android.content.Context?, intent: android.content.Intent?) {
+            if (intent?.action == android.content.Intent.ACTION_SCREEN_OFF) {
+                overlayManager?.hideAll()
+            }
+        }
+    }
+
     override fun onServiceConnected() {
         super.onServiceConnected()
         Log.d("WritingAssistService", "Service Connected")
@@ -17,6 +25,15 @@ class WritingAssistService : AccessibilityService() {
             override fun onReplace(text: String) {
                 performReplace(text)
             }
+        }
+        
+        try {
+            val filter = android.content.IntentFilter().apply {
+                addAction(android.content.Intent.ACTION_SCREEN_OFF)
+            }
+            registerReceiver(screenReceiver, filter)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -55,7 +72,7 @@ class WritingAssistService : AccessibilityService() {
         if (event == null) return
 
         if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            overlayManager?.hideBubble()
+            overlayManager?.hideAll()
             return
         }
 
@@ -103,7 +120,7 @@ class WritingAssistService : AccessibilityService() {
                     }
                 } else {
                     // Selection cleared or single cursor tap -> Hide Bubble
-                    overlayManager?.hideBubble()
+                    overlayManager?.hideAll()
                 }
                 
                 source.recycle()
@@ -113,11 +130,16 @@ class WritingAssistService : AccessibilityService() {
 
     override fun onInterrupt() {
         Log.d("WritingAssistService", "Service Interrupted")
-        overlayManager?.hideBubble()
+        overlayManager?.hideAll()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        overlayManager?.hideBubble()
+        try {
+            unregisterReceiver(screenReceiver)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        overlayManager?.hideAll()
     }
 }

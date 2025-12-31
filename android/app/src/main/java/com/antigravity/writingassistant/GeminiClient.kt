@@ -19,23 +19,23 @@ class GeminiClient {
     )
 
     fun generateContent(config: PromptConfig, callback: (String?) -> Unit) {
-        val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=$apiKey"
+        val url = "https://generativelanguage.googleapis.com/v1beta/models/gemma-3-27b-it:generateContent?key=$apiKey"
         
-        val systemPrompt = "You are a helpful writing assistant. Your task is to rewrite the text provided by the user. " +
-                "Do not add any conversational filler. Return ONLY the rewritten text."
+        val systemPrompt = """You are an expert writing assistant that rewrites text. CRITICAL RULES:
+1. You MUST rewrite the text according to the instruction given.
+2. Output ONLY the rewritten text - no explanations, no quotes, no prefixes like "Here's", no "Sure!", nothing else.
+3. Keep the rewritten text similar in length to the original unless asked to make it concise.
+4. Do NOT repeat the original text - transform it.
+5. Preserve the core meaning while applying the requested style/improvement."""
         
         val userPromptBuilder = StringBuilder()
         
-        if (!config.contextBefore.isNullOrEmpty() || !config.contextAfter.isNullOrEmpty()) {
-            userPromptBuilder.append("Context: ${config.contextBefore ?: ""} [TARGET] ${config.contextAfter ?: ""}\n")
-            userPromptBuilder.append("Task: Rewrite the [TARGET] text based on the following instructions.\n")
-        }
-        
         if (!config.instruction.isNullOrEmpty()) {
-            userPromptBuilder.append("Instruction: ${config.instruction}\n")
+            userPromptBuilder.append("INSTRUCTION: ${config.instruction}\n\n")
         }
         
-        userPromptBuilder.append("Text to Rewrite: ${config.originalText}")
+        userPromptBuilder.append("TEXT TO REWRITE:\n${config.originalText}\n\n")
+        userPromptBuilder.append("REWRITTEN TEXT:")
 
         val finalPrompt = userPromptBuilder.toString()
         

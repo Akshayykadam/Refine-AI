@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Light Mode - Monochrome Minimal -->
     <color name="panel_background">#FFFFFF</color>
-    <color name="text_primary">#0E101A</color>
-    <color name="text_secondary">#6D758D</color>
-    <color name="input_background">#F2F4F8</color>
-    <color name="btn_primary">#15C39A</color>
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#666666</color>
+    <color name="input_background">#F5F5F5</color>
+    <color name="btn_primary">#1A1A1A</color>
+    <color name="btn_primary_dark">#000000</color>
     <color name="btn_text">#FFFFFF</color>
-    <color name="divider">#E0E0E0</color>
-    <color name="chip_background">#F2F4F8</color>
-    <color name="shadow_color">#20000000</color>
-    <color name="colorPrimary">#15C39A</color>
-    <color name="iconBackground">#000000</color>
+    <color name="divider">#E5E5E5</color>
+    <color name="chip_background">#F0F0F0</color>
+    <color name="chip_selected">#1A1A1A</color>
+    <color name="shadow_color">#15000000</color>
+    <color name="colorPrimary">#1A1A1A</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#666666</color>
+    <color name="iconBackground">#1A1A1A</color>
     <color name="splashscreen_background">#FFFFFF</color>
+    <color name="step_number_bg">#F5F5F7</color>
+    <color name="step_number_text">#666666</color>
+    
+    <!-- Icon Colors (Light Mode) -->
+    <color name="icon_bg">#000000</color>
+    <color name="icon_tint">#FFFFFF</color>
+    <color name="gradient_start">#1A1A1A</color>
+    <color name="gradient_end">#333333</color>
 </resources>

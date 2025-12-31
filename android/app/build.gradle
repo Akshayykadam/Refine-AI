@@ -171,7 +171,6 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation 'com.google.mediapipe:tasks-genai:0.10.18'
     testImplementation 'junit:junit:4.13.2'
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
