@@ -592,14 +592,6 @@ export default function App() {
             <Ionicons name="flash" size={20} color={colors.textSecondary} />
             <Text style={styles.featureText}>Works in any text field</Text>
           </View>
-
-          <TouchableOpacity
-            style={[styles.secondaryButton, { marginTop: 16 }]}
-            onPress={() => checkForUpdates(true)}
-            disabled={isCheckingUpdate}
-          >
-            {isCheckingUpdate ? <ActivityIndicator color={colors.textPrimary} /> : <Text style={styles.secondaryButtonText}>Check for Updates</Text>}
-          </TouchableOpacity>
         </View>
 
         {/* Developer */}
