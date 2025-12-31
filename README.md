@@ -2,13 +2,13 @@
 
 <p align="center">
   <strong>Your AI Writing Assistant, Everywhere</strong><br>
-  <em>Powered by Gemini AI + Optional On-Device Processing</em>
+  <em>Premium Writing Refinement Powered by Google Gemini</em>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Android-green?style=flat-square" />
   <img src="https://img.shields.io/badge/AI-Gemini%20Flash-blue?style=flat-square" />
-  <img src="https://img.shields.io/badge/Local%20AI-Gemma%201B-orange?style=flat-square" />
+  <img src="https://img.shields.io/badge/Theme-Material%20You-purple?style=flat-square" />
 </p>
 
 ---
@@ -21,10 +21,11 @@ Refine.AI is a **system-wide writing assistant** that works in any Android app. 
 
 | Feature | Description |
 |:---|:---|
-| **System-Wide** | Works in WhatsApp, Gmail, Slack, Notes, and more |
-| **One-Tap Refine** | Select text → Tap bubble → Done |
-| **Local AI Mode** | Offline processing with Gemma 1B (~550MB) |
-| **Privacy First** | Your text, your device, your control |
+| **System-Wide** | Works in WhatsApp, Gmail, Slack, Notes, and more. |
+| **🎨 Material You** | Adaptive color palette based on your system wallpaper (Android 12+). |
+| **🔄 In-App Updates** | Seamless version checking and installation directly within the app. |
+| **✨ One-Tap Refine** | Select text → Tap bubble → Done. |
+| **🛡️ Privacy First** | Only processes text you explicitly select. |
 
 ---
 
@@ -32,26 +33,23 @@ Refine.AI is a **system-wide writing assistant** that works in any Android app. 
 
 Choose the perfect voice for every message:
 
-- **Refine** — Fix grammar and enhance clarity
-- **Professional** — Executive-ready communication  
-- **Casual** — Friendly and relaxed
-- **Hinglish** — Natural mix of Hindi and English 🇮🇳
-- **Warm** — Kind and approachable
-- **Love** — Affectionate language
-- **Emojify** — Add relevant emojis
+- **Refine** — Fix grammar and enhance clarity.
+- **Professional** — Executive-ready communication.
+- **Casual** — Friendly and relaxed.
+- **Hinglish** — Natural mix of Hindi and English. 🇮🇳
+- **Warm** — Kind and approachable.
+- **Love** — Affectionate language.
+- **Emojify** — Add relevant emojis without changing your words.
 
 ---
 
 ## What's New in v0.0.2
 
-- **Stability Improvements**: Fixed a crash issue when the screen is locked.
-- **In-App Update System**: Automatically check for and install updates from GitHub Releases.
-- **UI Polish**: Improved icon contrast for better visibility in Light Mode.
-- **Hinglish Support**: Rewrite text in natural Hindi-English mix.
-- **Main App Playground**: Test AI rewriting directly inside the app.
-- **Smart Privacy**: Popups auto-close on lock screen or app switch.
-- **Sleek Monochrome UI**: Premium dark/light themes with adaptive icons.
-- **Copy Support**: One-tap copy for quick sharing.
+- **Material You Dynamic Theming**: Beautiful, adaptive UI that follows your wallpaper.
+- **Enhanced Update System**: "Check for Updates" button and more reliable downloads.
+- **Stability Fixes**: Resolved crashes on newer Android versions and lock screen behavior.
+- **Improved Emojify**: Stricter control over AI output to preserve your original intent.
+- **Clipboard Fallback**: Better "Insert" button compatibility across different apps.
 
 ---
 
@@ -60,8 +58,8 @@ Choose the perfect voice for every message:
 ```
 Frontend UI      →  React Native (Expo)
 Core Engine      →  Kotlin AccessibilityService
-Cloud AI         →  Google Gemini Flash
-Local AI         →  MediaPipe + Gemma 1B (Int4)
+Intelligence     →  Google Gemini Flash API
+Style Engine     →  Material You (Dynamic Colors)
 ```
 
 ---
@@ -86,22 +84,11 @@ npx expo run:android
 
 ---
 
-## 🧠 AI Model (Gemma 2B)
-To use the local AI features:
-
-1. Open **Refine.AI**
-2. Tap **Download Model** (~1.4 GB)
-3. Enable **On-Device** toggle in the overlay
-
-> The model runs entirely on your device — no internet required.
-
----
-
 ## Privacy
 
-- Only processes text you explicitly select
-- Password fields are automatically ignored
-- Local AI mode keeps all data on-device
+- **On-Demand**: Only processes text you explicitly send to the AI.
+- **Secure**: Password fields are automatically ignored by the overlay.
+- **Transparent**: All cloud transmissions are encrypted.
 
 ---
 

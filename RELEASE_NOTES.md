@@ -1,18 +1,20 @@
 # Refine.AI v0.0.2 Release Notes
 
 ## 🚀 What's New
-- **Stability**: Resolved a `BroadcastReceiver` crash related to `ACTION_CLOSE_SYSTEM_DIALOGS` on newer Android versions.
-- **UI Improvements**: Updated the floating bubble icon to strictly follow the monochrome theme (Black background/White icon in Light mode, White background/Black icon in Dark mode).
-- **Bug Fixes**: Fixed an issue where the popup persisted over the lock screen.
+- **🎨 Material You Dynamic Theming**: The app's color palette now automatically adapts to your system wallpaper! (Android 12+).
+- **🔄 Manual Update Check**: Added a "Check for Updates" button in both the Updates card and the About section.
+- **🛠️ Robust Update Download**: Resolved APK download failures by moving to a more reliable caching mechanism.
+- **✨ Improved Emojify**: Refined AI prompts to ensure original text is preserved while adding relevant emojis.
+- **🔌 Insert Reliability**: Added a clipboard fallback for the 'Insert' button to ensure compatibility with more apps.
 
-## ✨ Features (from v0.0.1)
-- **Hinglish Support**: New rewriting style for Indian users.
-- **Main App Playground**: "Try it now" section to test AI rewriting instantly.
-- **One-Tap Copy**: Added a copy button to the main screen output.
-- **Auto-Dismiss**: Overlay automatically closes when switching apps or locking the device.
+## ✨ Core Features
+- **🌍 System-Wide Assistance**: Works in WhatsApp, Gmail, Slack, and any other text field via Accessibility.
+- **🇮🇳 Hinglish Support**: Natural rewriting style optimized for multi-lingual users.
+- **🏗️ App Playground**: A safe space to test and refine your AI prompts instantly.
+- **🌙 Enhanced Dark Mode**: Fixed contrast issues with selected components for a premium visual experience.
 
 ## 📦 Tech Details
 - **Version**: 0.0.2
 - **Build**: 2
 - **React Native**: 0.81.5
-- **Engine**: Gemini Flash + Gemma 1B (Local)
+- **Intelligence**: Google Gemini Flash API

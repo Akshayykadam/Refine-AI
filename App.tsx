@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   StyleSheet, Text, View, TouchableOpacity, Linking, Platform,
   ScrollView, SafeAreaView, NativeModules, AppState, Dimensions,
@@ -69,7 +69,54 @@ const onboardingSlides = [
 export default function App() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const colors = isDark ? COLORS.dark : COLORS.light;
+
+  const [dynamicColors, setDynamicColors] = useState<any>(null);
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      GeminiModule.getMaterialYouColors().then((map: any) => {
+        if (map && map.supported) {
+          setDynamicColors(map);
+        }
+      });
+    }
+  }, []);
+
+  const colors = useMemo(() => {
+    if (dynamicColors) {
+      if (isDark) {
+        return {
+          primary: dynamicColors.accent1_200,
+          primaryDark: dynamicColors.accent1_300,
+          accent: dynamicColors.accent1_200,
+          background: dynamicColors.neutral1_900,
+          cardBg: dynamicColors.neutral1_800,
+          cardBorder: dynamicColors.neutral1_600,
+          textPrimary: dynamicColors.neutral1_100,
+          textSecondary: dynamicColors.neutral1_300,
+          stepBg: dynamicColors.neutral1_800,
+          success: dynamicColors.accent1_200,
+          buttonText: dynamicColors.neutral1_900
+        };
+      } else {
+        return {
+          primary: dynamicColors.accent1_600,
+          primaryDark: dynamicColors.accent1_700,
+          accent: dynamicColors.accent1_600,
+          background: dynamicColors.neutral1_100,
+          cardBg: '#FFFFFF',
+          cardBorder: dynamicColors.neutral1_300,
+          textPrimary: dynamicColors.neutral1_900,
+          textSecondary: dynamicColors.neutral1_700,
+          stepBg: dynamicColors.neutral1_200,
+          success: dynamicColors.accent1_600,
+          buttonText: '#FFFFFF'
+        };
+      }
+    }
+    return isDark ? COLORS.dark : COLORS.light;
+  }, [isDark, dynamicColors]);
+
   const styles = getStyles(colors, isDark);
 
   const [showOnboarding, setShowOnboarding] = useState(true);

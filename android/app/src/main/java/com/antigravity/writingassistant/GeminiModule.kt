@@ -96,4 +96,53 @@ class GeminiModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
     fun removeListeners(count: Int) {
         // Required for RN event emitter
     }
+
+    @ReactMethod
+    fun getMaterialYouColors(promise: Promise) {
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                val map = Arguments.createMap()
+                val context = reactApplicationContext
+
+                val colors = mapOf(
+                    "accent1_100" to android.R.color.system_accent1_100,
+                    "accent1_200" to android.R.color.system_accent1_200,
+                    "accent1_300" to android.R.color.system_accent1_300,
+                    "accent1_400" to android.R.color.system_accent1_400,
+                    "accent1_500" to android.R.color.system_accent1_500,
+                    "accent1_600" to android.R.color.system_accent1_600,
+                    "accent1_700" to android.R.color.system_accent1_700,
+                    "accent1_800" to android.R.color.system_accent1_800,
+                    "accent1_900" to android.R.color.system_accent1_900,
+                    "neutral1_100" to android.R.color.system_neutral1_100,
+                    "neutral1_200" to android.R.color.system_neutral1_200,
+                    "neutral1_300" to android.R.color.system_neutral1_300,
+                    "neutral1_400" to android.R.color.system_neutral1_400,
+                    "neutral1_500" to android.R.color.system_neutral1_500,
+                    "neutral1_600" to android.R.color.system_neutral1_600,
+                    "neutral1_800" to android.R.color.system_neutral1_800,
+                    "neutral1_900" to android.R.color.system_neutral1_900
+                )
+
+                for ((key, resId) in colors) {
+                    val color = context.getColor(resId)
+                    val hex = String.format("#%06X", (0xFFFFFF and color))
+                    map.putString(key, hex)
+                }
+                
+                map.putBoolean("supported", true)
+                promise.resolve(map)
+            } else {
+                 val map = Arguments.createMap()
+                 map.putBoolean("supported", false)
+                 promise.resolve(map)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Return empty map with supported=false on error
+            val map = Arguments.createMap()
+            map.putBoolean("supported", false)
+            promise.resolve(map)
+        }
+    }
 }
