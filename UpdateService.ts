@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 const REPO_OWNER = 'Akshayykadam';
 const REPO_NAME = 'Refine-AI';
@@ -13,7 +13,11 @@ export interface ReleaseInfo {
 
 export const checkUpdate = async (currentVersion: string): Promise<ReleaseInfo | null> => {
     try {
-        const response = await fetch(GITHUB_API_URL);
+        const response = await fetch(GITHUB_API_URL, {
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        });
         const data = await response.json();
 
         if (!data || !data.tag_name) return null;
@@ -49,9 +53,19 @@ const compareVersions = (v1: string, v2: string) => {
     return 0;
 };
 
-export const downloadUpdate = async (url: string, fileName: string, onProgress?: (progress: number) => void): Promise<string | null> => {
+export const downloadUpdate = async (url: string, fileName: string, onProgress?: (progress: number) => void): Promise<string> => {
     try {
-        const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+        if (!url) throw new Error("Download URL is empty");
+
+        // Use cache directory to avoid permission issues
+        const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
+
+        // Clean up previous download (using deleteAsync with idempotent to avoid getInfoAsync)
+        try {
+            await FileSystem.deleteAsync(fileUri, { idempotent: true });
+        } catch (e) {
+            // Ignore deletion errors
+        }
 
         const downloadResu = FileSystem.createDownloadResumable(
             url,
@@ -65,11 +79,17 @@ export const downloadUpdate = async (url: string, fileName: string, onProgress?:
 
         const result = await downloadResu.downloadAsync();
 
-        if (result && result.status === 200) {
-            return result.uri;
+        if (!result) throw new Error("Download result is null");
+
+        if (result.status !== 200) {
+            throw new Error(`Server returned status: ${result.status}`);
         }
-    } catch (e) {
+
+        if (!result.uri) throw new Error("Download succeeded but URI is null");
+
+        return result.uri;
+    } catch (e: any) {
         console.error("Download Failed", e);
+        throw new Error(e.message || "Unknown download error");
     }
-    return null;
 };

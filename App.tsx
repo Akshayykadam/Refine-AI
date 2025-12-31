@@ -86,27 +86,34 @@ export default function App() {
   const [updateInfo, setUpdateInfo] = useState<ReleaseInfo | null>(null);
   const [isUpdateDownloading, setIsUpdateDownloading] = useState(false);
   const [updateProgress, setUpdateProgress] = useState(0);
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
 
   useEffect(() => {
     checkForUpdates();
   }, []);
 
-  const checkForUpdates = async () => {
+  const checkForUpdates = async (manual = false) => {
+    if (manual) setIsCheckingUpdate(true);
     const info = await checkUpdate(packageJson.version);
-    if (info) {
-      setUpdateInfo(info);
+    setUpdateInfo(info);
+    if (manual) {
+      setIsCheckingUpdate(false);
+      if (!info) {
+        Alert.alert("Up to Date", `You are using the latest version (v${packageJson.version}).`);
+      }
     }
   };
 
   const handleUpdate = async () => {
     if (!updateInfo) return;
     setIsUpdateDownloading(true);
-    const uri = await downloadUpdate(updateInfo.downloadUrl, updateInfo.fileName, (p) => setUpdateProgress(p));
-    setIsUpdateDownloading(false);
-    if (uri) {
-      GeminiModule.installApk(uri);
-    } else {
-      Alert.alert("Error", "Failed to download update.");
+    try {
+      const uri = await downloadUpdate(updateInfo.downloadUrl, updateInfo.fileName, (p) => setUpdateProgress(p));
+      if (uri) GeminiModule.installApk(uri);
+    } catch (e: any) {
+      Alert.alert("Update Error", e.message || "Failed to download update");
+    } finally {
+      setIsUpdateDownloading(false);
     }
   };
 
@@ -501,9 +508,23 @@ export default function App() {
                 )}
               </View>
             ) : (
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-                <Ionicons name="checkmark-circle-outline" size={18} color={colors.textSecondary} />
-                <Text style={{ color: colors.textSecondary, marginLeft: 6 }}>You are on the latest version.</Text>
+              <View style={{ marginTop: 8 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+                  <Ionicons name="checkmark-circle-outline" size={18} color={colors.textSecondary} />
+                  <Text style={{ color: colors.textSecondary, marginLeft: 6 }}>You are on the latest version.</Text>
+                </View>
+
+                <TouchableOpacity
+                  style={[styles.secondaryButton, { flexDirection: 'row', justifyContent: 'center', paddingVertical: 10 }]}
+                  onPress={() => checkForUpdates(true)}
+                  disabled={isCheckingUpdate}
+                >
+                  {isCheckingUpdate ? (
+                    <ActivityIndicator size="small" color={colors.textPrimary} />
+                  ) : (
+                    <Text style={styles.secondaryButtonText}>Check for Updates</Text>
+                  )}
+                </TouchableOpacity>
               </View>
             )}
           </View>
@@ -524,6 +545,14 @@ export default function App() {
             <Ionicons name="flash" size={20} color={colors.textSecondary} />
             <Text style={styles.featureText}>Works in any text field</Text>
           </View>
+
+          <TouchableOpacity
+            style={[styles.secondaryButton, { marginTop: 16 }]}
+            onPress={() => checkForUpdates(true)}
+            disabled={isCheckingUpdate}
+          >
+            {isCheckingUpdate ? <ActivityIndicator color={colors.textPrimary} /> : <Text style={styles.secondaryButtonText}>Check for Updates</Text>}
+          </TouchableOpacity>
         </View>
 
         {/* Developer */}
